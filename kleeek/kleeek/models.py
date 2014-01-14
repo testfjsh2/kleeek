@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 class roomType(models.Model):
     name = models.CharField(max_length=30)
     image = models.ImageField(upload_to='img')
+    typeKleeek = models.CharField(max_length=30)
 
 class roomManager(models.Model):
     roomTypeID = models.ForeignKey(roomType)
