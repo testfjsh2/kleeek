@@ -92,5 +92,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'static/media/')
+MEDIA_URL = '/static/media/'
 STATIC_URL = '/static/'

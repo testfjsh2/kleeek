@@ -3,8 +3,7 @@ from django.contrib.auth.models import User
 
 class roomType(models.Model):
     name = models.CharField(max_length=30)
-    image = models.CharField(max_length=50)
-
+    image = models.ImageField(upload_to='img')
 
 class roomManager(models.Model):
     roomTypeID = models.ForeignKey(roomType)

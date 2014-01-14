@@ -74,7 +74,7 @@ def get_room_list(request):
                         "roomManagerID": str(roomManagerRec.id),
                         "roomTypeID" : {"id": str(roomManagerRec.roomTypeID.id),
                                         "name": roomManagerRec.roomTypeID.name,
-                                        "image":roomManagerRec.roomTypeID.image.replace('/',"__"),
+                                        "image":roomManagerRec.roomTypeID.image.url.replace('/',"__"),
                                         },
                         "dateCreate" : roomManagerRec.dateCreate.strftime('%Y-%m-%d %H:%M:%S'),
                         "dateLost" : roomManagerRec.dateLost.strftime('%Y-%m-%d %H:%M:%S'),
