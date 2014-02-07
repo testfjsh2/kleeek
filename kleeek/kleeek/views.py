@@ -1,35 +1,37 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from models import roomManager, roomLog, payment
+from models import roomManager, roomLog, payment, User
 
 from datetime import datetime
 import json
 
 # Create your views here.
-# all right
+# done
 def set_vote(request):
     try:
-        if request.user.is_authenticated():
+        if is_authenticated(request):
             if request.method == "GET":
+
                 userID = request.GET['userID']
                 roomManagerID = request.GET['roomManagerID']
-                userName = request.GET['userName']
+                first_name = request.GET['first_name']
+                last_name = request.GET['last_name']
                 typeKleeek = request.GET['typeKleeek']
+                dateKleek = datetime.now()
+                user = User.objects.filter(username=userID)
 
-                dateKleek = datetime.now().strftime('%y-%m-%d %H:%M:%S')
-
-                if spent_kleeek(userID, typeKleeek):
+                if spent_kleeek(user, typeKleeek):
                         tmpRoom = roomManager.objects.filter(id = roomManagerID).update( 
                                               ownderID = userID, 
-                                              ownerName = userName, 
+                                              ownerName = first_name, 
                                               lastClickDate = dateKleek
                                             )
-                        tmpRoomLog = roomLog.objects.filter(roomManager = roomManagerID).update(oldOwners = (tmpRoomLog + userName))
+                        # tmpRoomLog = roomLog.objects.filter(roomManager = roomManagerID).update(oldOwners = (tmpRoomLog + userName))
                 return HttpResponse(userID)
     except Exception, e:
         return HttpResponse(0)
 
-# all right
+# done
 def get_room(request):
     structReturn = []
     try:
@@ -54,15 +56,16 @@ def get_room(request):
     except Exception, e:
         return HttpResponse(0)
 
+# done
 def close_room(roomManagerID):
     try:
-        if request.user.is_authenticated():
-            roomManager.objects.filter(id=roomManagerID).update(status='close')
-            return get_room_list(request)
+        # if request.user.is_authenticated():
+        roomManager.objects.filter(id=roomManagerID).update(status='close')
+        return get_room_list(0)
     except Exception, e:
         return HttpResponse(0)
 
-# all right
+# done
 def get_room_list(request):
     structReturn = []
     try:
@@ -144,25 +147,30 @@ def conver_kleeek(request):
     except Exception, e:
         return HttpResponse(0)
 
-def spent_kleeek(userID, typeKleeek, countKleeek=1):
+# done
+def spent_kleeek(user, typeKleeek, countKleeek=1):
     try:
         if int(typeKleeek) == 1:
-            oldGold = payment.objects.get(userID=userID).userGold
+            oldGold = payment.objects.get(userID=user).userGold
             newGold = oldGold - countKleeek
-            payment.objects.filter(userID=userID).update(userGold=newGold)
-            return HttpResponse(1)
+            if newGold >= 0:
+                payment.objects.filter(userID=user).update(userGold=newGold)
+                return True
         if int(typeKleeek) == 2:
-            oldSilver = payment.objects.get(userID=userID).userSilver
+            oldSilver = payment.objects.get(userID=user).userSilver
             newSilver = oldSilver - countKleeek
-            payment.objects.filter(userID=userID).update(userSilver=newSilver)
-            return HttpResponse(1)
+            if newSilver >= 0:
+                payment.objects.filter(userID=user).update(userSilver=newSilver)
+                return True
         if int(typeKleeek) == 3:
-            oldBronze = payment.objects.get(userID=userID).userBronze
+            oldBronze = payment.objects.get(userID=user).userBronze
             newBronze = oldBronze - countKleeek
-            payment.objects.filter(userID=userID).update(userBronze=newBronze)
-            return HttpResponse(1)
+            if newBronze >= 0:
+                payment.objects.filter(userID=user).update(userBronze=newBronze)
+                return True
+        return False
     except Exception, e:
-        return HttpResponse(0)
+        return False
 
 def set_day_bonus(request):
     try:
@@ -183,6 +191,7 @@ def set_bonus():
     except Exception, e:
         return HttpResponse(0)
 
+# done
 def structReturnFormat(structReturn):
     return str(structReturn).replace("u'","'").replace("'",'"')
 
@@ -191,3 +200,25 @@ def sell_kleeek(request):
         return HttpResponse(1)
     else:
         return HttpResponse(0)
+
+# done
+def is_authenticated(request):
+    try:
+        userID = request.GET['userID']
+        first_name = request.GET['first_name']
+        last_name = request.GET['last_name']
+        if request.META['REMOTE_HOST']=='vk.com':
+            if User.objects.filter(username=userID):
+                return True
+            else:
+                user = User.objects.create( username=userID, 
+                                            password='PBKDF2PasswordHasher', 
+                                            first_name=first_name,
+                                            last_name=last_name)
+                paymentObj = payment.objects.create(userID=user,userGold=0,userSilver=0,userBronze=0,dayBonus=0)
+                user.save()
+                paymentObj.save()
+                return True
+            return False
+    except Exception, e:
+        return False

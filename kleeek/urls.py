@@ -9,7 +9,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'', include('social_auth.urls')),
+    # url(r'^$', include('social_auth.urls')),
     url(r'^set_vote/', 'kleeek.kleeek.views.set_vote'),
     url(r'^spent_kleeek/', 'kleeek.kleeek.views.spent_kleeek'),
     url(r'^conver_kleeek/', 'kleeek.kleeek.views.conver_kleeek'),

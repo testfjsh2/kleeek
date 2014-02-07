@@ -27,13 +27,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
     'kleeek.kleeek',
 
 )
-
 VK_APP_ID = '3049876'
+VKONTAKTE_APP_ID = VK_APP_ID
 VK_API_SECRET = 'KcviIeKLsapVIsd9Kvjasn'
+VKONTAKTE_APP_SECRET = VK_API_SECRET
+
 VKAPP_USER_MODE = '2'
 
 AUTHENTICATION_BACKENDS = (

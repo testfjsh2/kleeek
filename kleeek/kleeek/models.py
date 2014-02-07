@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 
 class roomType(models.Model):
     name = models.CharField(max_length=30)
-    image = models.ImageField(upload_to='img')
     typeKleeek = models.CharField(max_length=30)
+    image = models.ImageField(upload_to='img')
 
 class roomManager(models.Model):
     roomTypeID = models.ForeignKey(roomType)
@@ -20,7 +20,7 @@ class roomLog(models.Model):
     oldOwners = models.TextField()
 
 class payment(models.Model):
-    userID = models.IntegerField()
+    userID = models.OneToOneField(User)
     userGold = models.IntegerField()
     userSilver = models.IntegerField()
     userBronze = models.IntegerField()
