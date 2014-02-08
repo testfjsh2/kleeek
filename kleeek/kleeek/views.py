@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse
 from models import roomManager, roomLog, payment, User
@@ -27,8 +28,10 @@ def set_vote(request):
                                             )
                         # tmpRoomLog = roomLog.objects.filter(roomManager = roomManagerID).update(oldOwners = (tmpRoomLog + userName))
                 return HttpResponse(get_room(request))
+        else:
+            return HttpResponse(403)
     except Exception, e:
-        return HttpResponse(request)
+        return HttpResponse(0)
 
 # done
 def get_room(request):
@@ -206,7 +209,7 @@ def is_authenticated(request):
         userID = request.GET['userID']
         first_name = request.GET['first_name']
         last_name = request.GET['last_name']
-        if request.META['REMOTE_HOST']=='vk.com':
+        if True:#request.META['HTTP_REFERER']=='http://vk.com/app3985490_17193680':
             if User.objects.filter(username=userID):
                 return True
             else:
@@ -214,7 +217,7 @@ def is_authenticated(request):
                                             password='PBKDF2PasswordHasher', 
                                             first_name=first_name,
                                             last_name=last_name)
-                paymentObj = payment.objects.create(userID=user,userGold=0,userSilver=0,userBronze=0,dayBonus=0)
+                paymentObj = payment.objects.create(userID=user,userGold=0,userSilver=0,userBronze=3,dayBonus=0)
                 user.save()
                 paymentObj.save()
                 return True
