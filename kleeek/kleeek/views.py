@@ -11,7 +11,6 @@ def set_vote(request):
     try:
         if is_authenticated(request):
             if request.method == "GET":
-
                 userID = request.GET['userID']
                 roomManagerID = request.GET['roomManagerID']
                 first_name = request.GET['first_name']
@@ -27,9 +26,9 @@ def set_vote(request):
                                               lastClickDate = dateKleek
                                             )
                         # tmpRoomLog = roomLog.objects.filter(roomManager = roomManagerID).update(oldOwners = (tmpRoomLog + userName))
-                return HttpResponse(userID)
+                return HttpResponse(get_room(request))
     except Exception, e:
-        return HttpResponse(0)
+        return HttpResponse(request)
 
 # done
 def get_room(request):
@@ -43,7 +42,7 @@ def get_room(request):
                         'roomManagerID': str(tmpRoom.id),
                         'roomTypeID' : {'id': str(tmpRoom.roomTypeID.id),
                                         'name': tmpRoom.roomTypeID.name,
-                                        'image':tmpRoom.roomTypeID.image.replace('/',"__"),
+                                        'image':tmpRoom.roomTypeID.image.url.replace('/',"__"),
                                         },
                         'dateCreate' : tmpRoom.dateCreate.strftime('%Y-%m-%d %H:%M:%S'),
                         'dateLost' : tmpRoom.dateLost.strftime('%Y-%m-%d %H:%M:%S'),
@@ -219,6 +218,7 @@ def is_authenticated(request):
                 user.save()
                 paymentObj.save()
                 return True
+        else:
             return False
     except Exception, e:
         return False
