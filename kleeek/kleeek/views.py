@@ -94,18 +94,19 @@ def get_room_list(request):
     except Exception, e:
         return HttpResponse(500)
 
-def get_user_total(request, userID=0):
+#done
+def get_user_total(request):
     try:
-        if request.user.is_authenticated():
-            if userID:
-                userID = request.GET['userID']
-            oldPayment = payment.objects.get(userID=userID)
-            structReturn = {
-                'userID': userID,
-                'userGold': oldPayment.userGold,
-                'userSilver': oldPayment.userSilver,
-                'userBronze': oldPayment.userBronze,
-            }
+        structReturn = []
+        if is_authenticated(request):
+            userID = request.GET['userID']
+            user = User.objects.filter(username=userID)
+            oldPayment = payment.objects.get(userID=user)
+            structReturn.append({
+                'userGold': str(oldPayment.userGold),
+                'userSilver': str(oldPayment.userSilver),
+                'userBronze': str(oldPayment.userBronze),
+            })
             return HttpResponse(structReturn)
     except Exception, e:
         return HttpResponse(0)
@@ -121,16 +122,36 @@ def get_users_total(request):
     except Exception, e:
         return HttpResponse(0)
 
+#done
+def get_multiplier(typeKleeekSpent, typeKleeekAdd):
+    try:
+        if typeKleeekSpent==1 and typeKleeekAdd==2:
+            return 10
+        if typeKleeekSpent==1 and typeKleeekAdd==3:
+            return 100
+        if typeKleeekSpent==2 and typeKleeekAdd==1:
+            return 0.1
+        if typeKleeekSpent==2 and typeKleeekAdd==3:
+            return 10
+        if typeKleeekSpent==3 and typeKleeekAdd==1:
+            return 0.01
+        if typeKleeekSpent==3 and typeKleeekAdd==2:
+            return 0.1
+        return 1
+    except Exception, e:
+        return 1
+
+#done
 def conver_kleeek(request):
     try:
-        if request.user.is_authenticated():
+        if is_authenticated(request):
             userID = request.GET['userID']
-            addKleeek = request.GET['addKleeek']
-            spentKleeek = request.GET['spentKleeek']
-            typeKleeekAdd = request.GET['typeKleeekAdd']
-            typeKleeekSpent = request.GET['typeKleeekSpent']
-
-            oldPayment = payment.objects.get(userID=userID)
+            # addKleeek = abs(int(request.GET['addKleeek']))
+            spentKleeek = abs(int(request.GET['spentKleeek']))
+            typeKleeekAdd = abs(int(request.GET['typeKleeekAdd']))
+            typeKleeekSpent = abs(int(request.GET['typeKleeekSpent']))
+            user = User.objects.filter(username=userID)
+            oldPayment = payment.objects.get(userID=user)
             if typeKleeekSpent==1:
                 if oldPayment.userGold < spentKleeek:
                     return HttpResponse(0)
@@ -141,8 +162,8 @@ def conver_kleeek(request):
                 if oldPayment.userBronze < spentKleeek:
                     return HttpResponse(0)
 
-            spent_kleeek(userID, typeKleeekSpent, spentKleeek)
-            spent_kleeek(userID, typeKleeekAdd, (-addKleeek)) 
+            spent_kleeek(user, typeKleeekSpent, spentKleeek)
+            spent_kleeek(user, typeKleeekAdd, (-spentKleeek * get_multiplier(typeKleeekSpent, typeKleeekAdd))) 
             return HttpResponse(1)
         else:
             return HttpResponse(0)
@@ -207,12 +228,12 @@ def sell_kleeek(request):
 def is_authenticated(request):
     try:
         userID = request.GET['userID']
-        first_name = request.GET['first_name']
-        last_name = request.GET['last_name']
         if True:#request.META['HTTP_REFERER']=='http://vk.com/app3985490_17193680':
             if User.objects.filter(username=userID):
                 return True
             else:
+                first_name = request.GET['first_name']
+                last_name = request.GET['last_name']
                 user = User.objects.create( username=userID, 
                                             password='PBKDF2PasswordHasher', 
                                             first_name=first_name,
