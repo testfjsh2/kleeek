@@ -164,7 +164,7 @@ def conver_kleeek(request):
 
             spent_kleeek(user, typeKleeekSpent, spentKleeek)
             spent_kleeek(user, typeKleeekAdd, (-spentKleeek * get_multiplier(typeKleeekSpent, typeKleeekAdd))) 
-            return HttpResponse(1)
+            return HttpResponse(get_user_total(request))
         else:
             return HttpResponse(0)
     except Exception, e:
