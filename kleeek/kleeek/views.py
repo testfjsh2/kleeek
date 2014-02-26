@@ -47,6 +47,7 @@ def get_room(request):
                                         'name': tmpRoom.roomTypeID.name,
                                         'image':tmpRoom.roomTypeID.image.url.replace('/',"__"),
                                         },
+                        'roomPosition': str(tmpRoom.roomPosition),
                         'dateCreate' : tmpRoom.dateCreate.strftime('%Y-%m-%d %H:%M:%S'),
                         'dateLost' : tmpRoom.dateLost.strftime('%Y-%m-%d %H:%M:%S'),
                         'ownderID' : str(tmpRoom.ownderID),
@@ -59,11 +60,11 @@ def get_room(request):
         return HttpResponse(0)
 
 # done
-def close_room(roomManagerID):
+def close_rooms():
     try:
         # if request.user.is_authenticated():
-        roomManager.objects.filter(id=roomManagerID).update(status='close')
-        return get_room_list(0)
+        roomManager.objects.filter(status='active').update(status='close')
+        return get_room_list()
     except Exception, e:
         return HttpResponse(0)
 
@@ -82,6 +83,7 @@ def get_room_list(request):
                                         "image": roomManagerRec.roomTypeID.image.url.replace('/',"__"),
                                         "typeKleeek": roomManagerRec.roomTypeID.typeKleeek,
                                         },
+                        "roomPosition": str(roomManagerRec.roomPosition),
                         "dateCreate" : roomManagerRec.dateCreate.strftime('%Y-%m-%d %H:%M:%S'),
                         "dateLost" : roomManagerRec.dateLost.strftime('%Y-%m-%d %H:%M:%S'),
                         "ownderID" : str(roomManagerRec.ownderID),
@@ -195,22 +197,27 @@ def spent_kleeek(user, typeKleeek, countKleeek=1):
     except Exception, e:
         return False
 
+#done
 def set_day_bonus(request):
     try:
-        if request.user.is_authenticated():
-            userID = request.GET['userID']
-            oldPayment = payment.objects.get(userID=userID)
-            if oldPayment.dayBonus != '':
-                payment.objects.filter(userID=userID).update(userBronze=(oldPayment.userBronze+1))
+        payment.objects.update(dayBonus=1)
+        return HttpResponse(1)
     except Exception, e:
         return HttpResponse(0)
-
-def set_bonus():
+#done
+def set_bonus(request):
     try:
-        if request.user.is_authenticated():
+        if is_authenticated(request):
             userID = request.GET['userID']
-            oldPayment = payment.objects.get(userID=userID)
-            payment.objects.filter(userID=userID).update(userBronze=(oldPayment.userBronze+1))
+            user = User.objects.filter(username=userID)
+            oldPayment = payment.objects.get(userID=user)
+            oldBronze = oldPayment.userBronze
+            oldDayBonus = oldPayment.dayBonus
+            if oldDayBonus == 1:
+                payment.objects.filter(userID=user).update(dayBonus=0)
+                payment.objects.filter(userID=user).update(userBronze=(oldBronze+3))
+                return HttpResponse(get_user_total(request))
+        return HttpResponse(0)
     except Exception, e:
         return HttpResponse(0)
 

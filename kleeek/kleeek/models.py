@@ -9,6 +9,7 @@ class roomType(models.Model):
 
 class roomManager(models.Model):
     roomTypeID = models.ForeignKey(roomType)
+    roomPosition = models.IntegerField()
     dateCreate = models.DateField()
     dateLost = models.DateField()
     ownderID = models.IntegerField()
