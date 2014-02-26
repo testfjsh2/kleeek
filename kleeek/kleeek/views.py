@@ -59,12 +59,27 @@ def get_room(request):
     except Exception, e:
         return HttpResponse(0)
 
-# done
-def close_rooms():
+#done
+def close_rooms(request):
     try:
-        # if request.user.is_authenticated():
-        roomManager.objects.filter(status='active').update(status='close')
-        return get_room_list()
+        managers = roomManager.objects.filter(status='active')
+        for manager in managers:
+            if (manager.dateLost <= datetime.today().date()):
+                manager.status='close'
+                manager.save()
+        return get_room_list(request)
+    except Exception, e:
+        return HttpResponse(0)
+
+# done
+def kill_rooms(request):
+    try:
+        managers = roomManager.objects.filter(status='close')
+        for manager in managers:
+            if (manager.dateLost.day < datetime.today().date().day) or (manager.dateLost.day == 1 and datetime.today().date().day != 1):
+                manager.status='kill'
+                manager.save()
+        return get_room_list(request)
     except Exception, e:
         return HttpResponse(0)
 

@@ -20,4 +20,6 @@ urlpatterns = patterns('',
     url(r'^sell_kleeek/', 'kleeek.kleeek.views.sell_kleeek'),
     url(r'^set_bonus/', 'kleeek.kleeek.views.set_bonus'),
     url(r'^set_day_bonus/', 'kleeek.kleeek.views.set_day_bonus'),
+    url(r'^close_rooms/', 'kleeek.kleeek.views.close_rooms'),
+    url(r'^kill_rooms/', 'kleeek.kleeek.views.kill_rooms'),
 )
