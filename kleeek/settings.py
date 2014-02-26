@@ -28,7 +28,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'kleeek.kleeek',
-
 )
 VK_APP_ID = '3049876'
 VKONTAKTE_APP_ID = VK_APP_ID
