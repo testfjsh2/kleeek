@@ -89,24 +89,24 @@ def get_room_list(request):
     try:
         # if request.user.is_authenticated():
             # if request.method == "GET":
-                roomManagerList = roomManager.objects.filter(status='active')
-                for roomManagerRec in roomManagerList:
-                    structReturn.append({
-                        "roomManagerID": str(roomManagerRec.id),
-                        "roomTypeID" : {"id": str(roomManagerRec.roomTypeID.id),
-                                        "name": roomManagerRec.roomTypeID.name,
-                                        "image": roomManagerRec.roomTypeID.image.url.replace('/',"__"),
-                                        "typeKleeek": roomManagerRec.roomTypeID.typeKleeek,
-                                        },
-                        "roomPosition": str(roomManagerRec.roomPosition),
-                        "dateCreate" : roomManagerRec.dateCreate.strftime('%Y-%m-%d %H:%M:%S'),
-                        "dateLost" : roomManagerRec.dateLost.strftime('%Y-%m-%d %H:%M:%S'),
-                        "ownderID" : str(roomManagerRec.ownderID),
-                        "ownerName" : roomManagerRec.ownerName,
-                        "lastClickDate" : roomManagerRec.lastClickDate.strftime('%Y-%m-%d %H:%M:%S'),
-                        "status" : roomManagerRec.status,
-                        })
-                return HttpResponse(structReturnFormat(structReturn))
+        roomManagerList = roomManager.objects.filter(status='active') | roomManager.objects.filter(status='close')
+        for roomManagerRec in roomManagerList:
+            structReturn.append({
+                "roomManagerID": str(roomManagerRec.id),
+                "roomTypeID" : {"id": str(roomManagerRec.roomTypeID.id),
+                                "name": roomManagerRec.roomTypeID.name,
+                                "image": roomManagerRec.roomTypeID.image.url.replace('/',"__"),
+                                "typeKleeek": roomManagerRec.roomTypeID.typeKleeek,
+                                },
+                "roomPosition": str(roomManagerRec.roomPosition),
+                "dateCreate" : roomManagerRec.dateCreate.strftime('%Y-%m-%d %H:%M:%S'),
+                "dateLost" : roomManagerRec.dateLost.strftime('%Y-%m-%d %H:%M:%S'),
+                "ownderID" : str(roomManagerRec.ownderID),
+                "ownerName" : roomManagerRec.ownerName,
+                "lastClickDate" : roomManagerRec.lastClickDate.strftime('%Y-%m-%d %H:%M:%S'),
+                "status" : roomManagerRec.status,
+                })
+        return HttpResponse(structReturnFormat(structReturn))
             # return HttpResponse(403)
     except Exception, e:
         return HttpResponse(500)
