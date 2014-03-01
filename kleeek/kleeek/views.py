@@ -120,9 +120,9 @@ def get_user_total(request):
             user = User.objects.filter(username=userID)
             oldPayment = payment.objects.get(userID=user)
             structReturn.append({
-                'userGold': str(oldPayment.userGold),
-                'userSilver': str(oldPayment.userSilver),
-                'userBronze': str(oldPayment.userBronze),
+                "userGold": str(oldPayment.userGold),
+                "userSilver": str(oldPayment.userSilver),
+                "userBronze": str(oldPayment.userBronze),
             })
             return HttpResponse(structReturn)
     except Exception, e:
