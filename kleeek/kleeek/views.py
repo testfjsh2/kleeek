@@ -124,7 +124,7 @@ def get_user_total(request):
                 "userSilver": str(oldPayment.userSilver),
                 "userBronze": str(oldPayment.userBronze),
             })
-            return HttpResponse(structReturn)
+            return HttpResponse(structReturnFormat(structReturn))
     except Exception, e:
         return HttpResponse(0)
 
