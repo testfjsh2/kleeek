@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from models import roomManager, roomLog, payment, User
@@ -19,6 +20,7 @@ def set_vote(request):
                 typeKleeek = request.GET['typeKleeek']
                 dateKleek = datetime.now()
                 user = User.objects.filter(username=userID)
+                currentManager = roomManager.objects.filter(id = roomManagerID)
 
                 if spent_kleeek(user, typeKleeek):
                         tmpRoom = roomManager.objects.filter(id = roomManagerID).update( 
@@ -27,6 +29,7 @@ def set_vote(request):
                                               lastClickDate = dateKleek
                                             )
                         # tmpRoomLog = roomLog.objects.filter(roomManager = roomManagerID).update(oldOwners = (tmpRoomLog + userName))
+                        log_statistic(currentManager, user, dateKleek)
                 return HttpResponse(get_room(request))
         else:
             return HttpResponse(403)
@@ -54,6 +57,7 @@ def get_room(request):
                         'ownerName' : tmpRoom.ownerName,
                         'lastClickDate' : tmpRoom.lastClickDate.strftime('%Y-%m-%d %H:%M:%S'),
                         'status' : tmpRoom.status,
+                        'oldOwners': get_statistic(tmpRoom.roomlog.oldOwners) if hasattr(tmpRoom, 'roomlog') else [],
                     })
                 return HttpResponse(structReturnFormat(structReturn))
     except Exception, e:
@@ -268,3 +272,29 @@ def is_authenticated(request):
             return False
     except Exception, e:
         return False
+
+#done
+def log_statistic(currentManagers, users, dateKleek):
+    try:
+        for currentManager in currentManagers:
+            for user in users:
+                if not hasattr(currentManager, 'roomlog'):
+                    roomLog.objects.create(roomManager = currentManager,
+                                           oldOwners = '')
+                oldOwners = currentManager.roomlog.oldOwners
+                currentManager.roomlog.oldOwners = oldOwners + '{"username":"%s", "firstLast" : "%s" ,"dateKleek": "%s"}&&&' % (
+                               user.username, user.first_name + user.last_name, dateKleek)
+                currentManager.roomlog.save()
+    except Exception, e:
+        raise e
+
+#done
+def get_statistic(statSring):
+    try:
+        statsList = statSring.strip()[:-3].split('&&&')
+        jsonStatistic = []
+        for statList in statsList:
+            jsonStatistic.append(json.loads(statList))
+        return jsonStatistic
+    except Exception, e:
+        return []
