@@ -14,6 +14,7 @@ class roomManager(models.Model):
     dateLost = models.DateField()
     ownderID = models.IntegerField()
     ownerName = models.CharField(max_length=30)
+    ownerLastName = models.CharField(max_length=30)
     lastClickDate = models.DateField()
     status = models.CharField(max_length=20)
 

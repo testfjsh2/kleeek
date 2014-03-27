@@ -25,7 +25,8 @@ def set_vote(request):
                 if spent_kleeek(user, typeKleeek):
                         tmpRoom = roomManager.objects.filter(id = roomManagerID).update( 
                                               ownderID = userID, 
-                                              ownerName = first_name, 
+                                              ownerName = first_name,
+                                              ownerLastName = last_name,
                                               lastClickDate = dateKleek
                                             )
                         # tmpRoomLog = roomLog.objects.filter(roomManager = roomManagerID).update(oldOwners = (tmpRoomLog + userName))
@@ -55,6 +56,7 @@ def get_room(request):
                         'dateLost' : tmpRoom.dateLost.strftime('%Y-%m-%d %H:%M:%S'),
                         'ownderID' : str(tmpRoom.ownderID),
                         'ownerName' : tmpRoom.ownerName,
+                        'ownerLastName' : tmpRoom.ownerLastName,
                         'lastClickDate' : tmpRoom.lastClickDate.strftime('%Y-%m-%d %H:%M:%S'),
                         'status' : tmpRoom.status,
                         'oldOwners': get_statistic(tmpRoom.roomlog.oldOwners) if hasattr(tmpRoom, 'roomlog') else [],
@@ -264,7 +266,7 @@ def is_authenticated(request):
                                             password='PBKDF2PasswordHasher', 
                                             first_name=first_name,
                                             last_name=last_name)
-                paymentObj = payment.objects.create(userID=user,userGold=0,userSilver=0,userBronze=3,dayBonus=0)
+                paymentObj = payment.objects.create(userID=user,userGold=1000,userSilver=1000,userBronze=3000,dayBonus=0)
                 user.save()
                 paymentObj.save()
                 return True
@@ -283,7 +285,7 @@ def log_statistic(currentManagers, users, dateKleek):
                                            oldOwners = '')
                 oldOwners = currentManager.roomlog.oldOwners
                 currentManager.roomlog.oldOwners = oldOwners + '{"username":"%s", "firstLast" : "%s" ,"dateKleek": "%s"}&&&' % (
-                               user.username, user.first_name + user.last_name, dateKleek)
+                               user.username, user.first_name + " " + user.last_name, dateKleek)
                 currentManager.roomlog.save()
     except Exception, e:
         raise e
