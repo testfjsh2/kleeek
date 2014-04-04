@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 import json
+import zmq
+from websocket import create_connection
 from django.shortcuts import render
 from django.http import HttpResponse
 from models import roomManager, roomLog, payment, User
 
 from datetime import datetime
-import json
+
+def SockResponse(msg):
+    ws = create_connection("ws://127.0.0.1:8888/chatsocket")
+    ws.send(msg)
 
 # Create your views here.
 # done
@@ -61,6 +66,7 @@ def get_room(request):
                         'status' : tmpRoom.status,
                         'oldOwners': get_statistic(tmpRoom.roomlog.oldOwners) if hasattr(tmpRoom, 'roomlog') else [],
                     })
+                SockResponse(structReturnFormat(structReturn))
                 return HttpResponse(structReturnFormat(structReturn))
     except Exception, e:
         return HttpResponse(0)
@@ -112,6 +118,7 @@ def get_room_list(request):
                 "lastClickDate" : roomManagerRec.lastClickDate.strftime('%Y-%m-%d %H:%M:%S'),
                 "status" : roomManagerRec.status,
                 })
+        # SockResponse(structReturnFormat(structReturn))
         return HttpResponse(structReturnFormat(structReturn))
             # return HttpResponse(403)
     except Exception, e:
