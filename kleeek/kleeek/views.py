@@ -302,7 +302,7 @@ def get_statistic(statSring):
     try:
         statsList = statSring.strip()[:-3].split('&&&')
         jsonStatistic = []
-        for statList in statsList:
+        for statList in statsList[-9:]:
             jsonStatistic.append(json.loads(statList))
         return jsonStatistic
     except Exception, e:

@@ -38,22 +38,22 @@ class Application(tornado.web.Application):
             (r"/", MainHandler),
             (r"/chatsocket", ChatSocketHandler),
         ]
-        settings = dict()
+        settings = dict(
         # ========================================
-        #     cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
-        #     template_path=os.path.join(os.path.dirname(__file__), "templates"),
-        #     static_path=os.path.join(os.path.dirname(__file__), "static"),
-        #     xsrf_cookies=True,
-        # )
+            cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
+            template_path=os.path.join(os.path.dirname(__file__), "templates"),
+            static_path=os.path.join(os.path.dirname(__file__), "static"),
+            xsrf_cookies=True,
+        )
         # ========================================
         tornado.web.Application.__init__(self, handlers, **settings)
 
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        pass
+        # pass
         # ========================================
-        # self.render("index.html", messages=ChatSocketHandler.cache)
+        self.render("index.html", messages=ChatSocketHandler.cache)
         # ========================================
 
 class ChatSocketHandler(tornado.websocket.WebSocketHandler):
