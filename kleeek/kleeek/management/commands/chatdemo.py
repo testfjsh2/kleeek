@@ -60,11 +60,7 @@ class FlashPolicyServer(TCPServer):
         self._stream.read_until('\n', self._handle_read)
 
     def _handle_read(self, data):
-        policyFile = """<cross-domain-policy> 
-                            <allow-access-from domain="*" /> 
-                            <allow-http-request-headers-from domain="*" headers="*"/> 
-                        </cross-domain-policy>
-                    """
+        policyFile = "<cross-domain-policy><allow-access-from domain=\"*\" to-ports=\"*\"/></cross-domain-policy>\0"
         self._stream.write(policyFile + '\0')
         self._read_line()
 
