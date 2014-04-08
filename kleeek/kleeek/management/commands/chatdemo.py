@@ -36,6 +36,7 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", MainHandler),
+            (r"/crossdomain.xml", FlashPolicies),
             (r"/chatsocket", ChatSocketHandler),
         ]
         settings = dict(
@@ -48,12 +49,23 @@ class Application(tornado.web.Application):
         # ========================================
         tornado.web.Application.__init__(self, handlers, **settings)
 
+class FlashPolicies(tornado.web.RequestHandler):
+    """docstring for flashPolicies"""
+    def get(self):
+        self.write("""<cross-domain-policy> 
+                <allow-access-from domain="*" /> 
+                <allow-http-request-headers-from domain="*" headers="*"/> 
+            </cross-domain-policy>
+            """)
+        
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        # pass
+        pass
+        # import pdb; pdb.set_trace()
+        # self.render("crossdomain.xml")
         # ========================================
-        self.render("index.html", messages=ChatSocketHandler.cache)
+        # self.render("index.html", messages=ChatSocketHandler.cache)
         # ========================================
 
 class ChatSocketHandler(tornado.websocket.WebSocketHandler):

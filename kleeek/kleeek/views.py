@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json
-import zmq
 from websocket import create_connection
 from django.shortcuts import render
 from django.http import HttpResponse
