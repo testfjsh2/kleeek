@@ -26,8 +26,8 @@ import tornado.web
 import tornado.websocket
 import os.path
 import uuid
-
 from tornado.options import define, options
+from tornado.tcpserver import TCPServer
 
 define("port", default=8888, help="run on the given port", type=int)
 
@@ -35,8 +35,8 @@ define("port", default=8888, help="run on the given port", type=int)
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/", MainHandler),
-            (r"/crossdomain.xml", FlashPolicies),
+            # (r"/", MainHandler),
+            (r"/", FlashPolicyServer),
             (r"/chatsocket", ChatSocketHandler),
         ]
         settings = dict(
@@ -49,24 +49,29 @@ class Application(tornado.web.Application):
         # ========================================
         tornado.web.Application.__init__(self, handlers, **settings)
 
-class FlashPolicies(tornado.web.RequestHandler):
-    """docstring for flashPolicies"""
-    def get(self):
-        self.write("""<cross-domain-policy> 
-                <allow-access-from domain="*" /> 
-                <allow-http-request-headers-from domain="*" headers="*"/> 
-            </cross-domain-policy>
-            """)
-        
+
+class FlashPolicyServer(TCPServer):
+
+    def handle_stream(self, stream, address):
+        self._stream = stream
+        self._read_line()
+
+    def _read_line(self):
+        self._stream.read_until('\n', self._handle_read)
+
+    def _handle_read(self, data):
+        policyFile = """<cross-domain-policy> 
+                            <allow-access-from domain="*" /> 
+                            <allow-http-request-headers-from domain="*" headers="*"/> 
+                        </cross-domain-policy>
+                    """
+        self._stream.write(policyFile + '\0')
+        self._read_line()
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         pass
-        # import pdb; pdb.set_trace()
-        # self.render("crossdomain.xml")
-        # ========================================
-        # self.render("index.html", messages=ChatSocketHandler.cache)
-        # ========================================
 
 class ChatSocketHandler(tornado.websocket.WebSocketHandler):
     waiters = set()
@@ -100,19 +105,8 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
 
     def on_message(self, message):
         logging.info("got message %r", message)
-        # ========================================
-        # parsed = tornado.escape.json_decode(message)
-        # chat = {
-        #     "id": str(uuid.uuid4()),
-        #     "body": message,
-        #     }
-        # chat["html"] = tornado.escape.to_basestring(
-        #     self.render_string("message.html", message=chat))
-        # ChatSocketHandler.update_cache(chat)
-        # ChatSocketHandler.send_updates(chat)
-        # ========================================
-        ChatSocketHandler.update_cache(message)#(chat)
-        ChatSocketHandler.send_updates(message)#(chat)
+        ChatSocketHandler.update_cache(message)
+        ChatSocketHandler.send_updates(message)
 
 
 def main():
