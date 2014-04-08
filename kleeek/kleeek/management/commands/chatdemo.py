@@ -83,6 +83,12 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
+        policyFile = """<cross-domain-policy> 
+                            <allow-access-from domain="*" /> 
+                            <allow-http-request-headers-from domain="*" headers="*"/> 
+                        </cross-domain-policy>
+                    """
+        self.write_message(policyFile + '\0')
         ChatSocketHandler.waiters.add(self)
 
     def on_close(self):
