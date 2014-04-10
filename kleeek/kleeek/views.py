@@ -253,22 +253,30 @@ def structReturnFormat(structReturn):
     return str(structReturn).replace("u'","'").replace("'",'"')
 
 def sell_kleeek(request):
-    if request.user.is_authenticated():
+    if True:
+        erMsg = {
+            "error": {
+            'error_code': '',
+            'error_msg': '',
+            'critical': ''
+            }
+        }
         try:
             kleeekSell = json.loads(request.POST['item'])
-        except Exception, e:
-            HttpResponse(401)
-
-        try:
             username = request.POST['user_id']
         except Exception, e:
-            HttpResponse(402)
+            erMsg['error_code'] = 11
+            erMsg['error_msg'] = 'incorrect item or user_id'
+            erMsg['critical'] = True
+            HttpResponse(structReturnFormat(erMsg))
 
         try:
             user = User.objects.filter(username=username)
             spent_kleeek(user, kleeekSell['type'], -kleeekSell['cnt'])
         except Exception, e:
-            HttpResponse(405)
+            erMsg['error_code'] = 22
+            erMsg['error_msg'] = 'user:' + username ' not found'
+            erMsg['critical'] = True
 
         return HttpResponse('{}')
     else:
