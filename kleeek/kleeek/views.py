@@ -277,10 +277,11 @@ def sell_kleeek(request):
             erMsg['error_code'] = 22
             erMsg['error_msg'] = 'user:' + username + ' not found'
             erMsg['critical'] = True
+            HttpResponse(structReturnFormat(erMsg))
 
         return HttpResponse('{}')
     else:
-        return HttpResponse(403)
+        return HttpResponse(500)
 
 # done
 def is_authenticated(request):
