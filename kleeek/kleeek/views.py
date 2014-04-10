@@ -275,7 +275,7 @@ def sell_kleeek(request):
             spent_kleeek(user, kleeekSell['type'], -kleeekSell['cnt'])
         except Exception, e:
             erMsg['error_code'] = 22
-            erMsg['error_msg'] = 'user:' + username ' not found'
+            erMsg['error_msg'] = 'user:' + username + ' not found'
             erMsg['critical'] = True
 
         return HttpResponse('{}')
