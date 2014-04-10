@@ -12,7 +12,7 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
             print self.data
             if '<policy-file-request/>' in self.data:
                 print 'received policy'
-                conn.send(cross + '\0')
+                self.request.sendall(cross + '\0')
 
 def main():
     # Create the server, binding to localhost on port 9999
@@ -21,3 +21,5 @@ def main():
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C
     server.serve_forever()
+
+main()

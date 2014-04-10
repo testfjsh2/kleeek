@@ -254,9 +254,13 @@ def structReturnFormat(structReturn):
 
 def sell_kleeek(request):
     if request.user.is_authenticated():
-        return HttpResponse(1)
+        kleeekSell = json.loads(request.POST['item'])
+        username = request.POST['user_id']
+        user = User.objects.filter(username=username)
+        spent_kleeek(user, kleeekSell['type'], -kleeekSell['cnt'])
+        return HttpResponse('{}')
     else:
-        return HttpResponse(0)
+        return HttpResponse(403)
 
 # done
 def is_authenticated(request):
