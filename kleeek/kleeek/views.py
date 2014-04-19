@@ -267,9 +267,9 @@ def get_price(typeKleeek, countKleeek):
         if countKleeek == 11:
             price = 100
         if countKleeek==28:
-            price == 250
+            price = 250
         if countKleeek == 60:
-            price == 500
+            price = 500
     return price
 
 @method_decorator(csrf_exempt)
