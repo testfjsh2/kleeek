@@ -28,6 +28,7 @@ class payment(models.Model):
     userSilver = models.IntegerField()
     userBronze = models.IntegerField()
     dayBonus = models.IntegerField()
+    wallPostBonus = models.IntegerField()
 
 class orderTab(models.Model):
     order_id = models.IntegerField()

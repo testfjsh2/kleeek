@@ -201,6 +201,8 @@ def conver_kleeek(request):
     except Exception, e:
         return HttpResponse(0)
 
+
+
 # done
 def spent_kleeek(user, typeKleeek, countKleeek=1):
     try:
@@ -244,7 +246,7 @@ def set_bonus(request):
             oldDayBonus = oldPayment.dayBonus
             if oldDayBonus == 1:
                 payment.objects.filter(userID=user).update(dayBonus=0)
-                payment.objects.filter(userID=user).update(userBronze=(oldBronze+3))
+                payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
                 return HttpResponse(get_user_total(request))
         return HttpResponse(0)
     except Exception, e:
@@ -254,9 +256,22 @@ def set_bonus(request):
 def structReturnFormat(structReturn):
     return str(structReturn).replace("u'","'").replace("'",'"')
 
+#done
+def set_wall_post_bonus(request):
+    userID = request.GET['userID']
+    user = User.objects.filter(username=userID)
+    oldPayment = payment.objects.get(userID=user)
+    oldBronze = oldPayment.userBronze
+    wallPostBonus = oldPayment.wallPostBonus
+    if wallPostBonus != 1:
+        payment.objects.filter(userID=user).update(wallPostBonus=1)
+        payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
+    return HttpResponse(get_user_total(request))
+
 def check_sign(request):
     return True
 
+#done
 def get_price(typeKleeek, countKleeek):
     price = 0
     if typeKleeek == 2:
