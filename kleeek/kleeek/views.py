@@ -280,7 +280,8 @@ def sell_kleeek(request):
 
         try:
             notification_type = request.POST['notification_type']
-            kleeekSell = json.loads(request.POST['item'])
+            itemFormat = request.POST['item'].replace('&quot', '"');
+            kleeekSell = json.loads(itemFormat)
             username = request.POST['user_id']
         except Exception, e:
             returnMsg["error"] = {
