@@ -3,7 +3,7 @@ import json
 from websocket import create_connection
 from django.shortcuts import render
 from django.http import HttpResponse
-from models import roomManager, roomLog, payment, User
+from models import roomManager, roomLog, payment, User, orderTab
 
 from datetime import datetime
 
@@ -252,36 +252,123 @@ def set_bonus(request):
 def structReturnFormat(structReturn):
     return str(structReturn).replace("u'","'").replace("'",'"')
 
+def check_sign(request):
+    return True
+
+def get_price(typeKleeek, countKleeek):
+    price = 0
+    if typeKleeek == 2:
+        price = 1
+    if typeKleeek == 1:
+        if countKleeek<=5:
+            price = countKleeek * 10
+        if countKleeek == 11:
+            price = 100
+        if countKleeek==28:
+            price == 250
+        if countKleeek == 60:
+            price == 500
+    return price
+
 def sell_kleeek(request):
-    if True:
-        erMsg = {
-            "error": {
-            'error_code': '',
-            'error_msg': '',
-            'critical': ''
-            }
-        }
+    if check_sign(request):
+        returnMsg = {}
+        erMsg = {}
+
         try:
+            notification_type = request.POST['notification_type']
             kleeekSell = json.loads(request.POST['item'])
             username = request.POST['user_id']
         except Exception, e:
-            erMsg['error_code'] = 11
-            erMsg['error_msg'] = 'incorrect item or user_id'
-            erMsg['critical'] = True
-            HttpResponse(structReturnFormat(erMsg))
+            returnMsg["error"] = {
+                error_code: 11,
+                error_msg: 'incorrect request',
+                critical: True,
+            }
+            return HttpResponse(structReturnFormat(erMsg))
 
-        try:
-            user = User.objects.filter(username=username)
-            spent_kleeek(user, kleeekSell['type'], -kleeekSell['cnt'])
-        except Exception, e:
-            erMsg['error_code'] = 22
-            erMsg['error_msg'] = 'user:' + username + ' not found'
-            erMsg['critical'] = True
-            HttpResponse(structReturnFormat(erMsg))
+        if notification_type == 'get_item':
+            if kleeekSell['type'] == 1:
+                returnMsg['response'] = {
+                    item_id: '1_' + kleeekSell['cnt'],
+                    title: kleeekSell['cnt'] + ' Gold Kleeek',
+                    photo_url: '',
+                    price: get_price(1, int(kleeekSell['cnt'])),
+                }
 
-        return HttpResponse('{}')
-    else:
-        return HttpResponse(500)
+            if kleeekSell['type'] == 2:
+                returnMsg['response'] = {
+                    item_id: '2_' + kleeekSell['cnt'],
+                    title: kleeekSell['cnt'] + ' Silver Kleeek',
+                    photo_url: '',
+                    price: get_price(2, int(kleeekSell['cnt'])),
+                }
+            break
+
+        elif notification_type == 'get_item_test':
+            if kleeekSell['type'] == 1:
+                returnMsg['response'] = {
+                    item_id: '1_' + kleeekSell['cnt'],
+                    title: kleeekSell['cnt'] + ' Gold Kleeek(test mode)',
+                    photo_url: '',
+                    price: get_price(1, int(kleeekSell['cnt'])),
+                }
+
+            if kleeekSell['type'] == 2:
+                returnMsg['response'] = {
+                    item_id: '2_' + kleeekSell['cnt'],
+                    title: kleeekSell['cnt'] + ' Silver Kleeek(test mode)',
+                    photo_url: '',
+                    price: get_price(2, int(kleeekSell['cnt'])),
+                }
+            break
+
+        elif notification_type == 'order_status_change':
+            try:
+                order_id = request.POST['order_id']
+                user_id = request.POST['user_id']
+
+                orderRow = orderTab.objects.create(order_id=order_id,user_id=user_id)
+                orderRow.save()
+                user = User.objects.filter(username=username)
+                spent_kleeek(user, kleeekSell['type'], -int(kleeekSell['cnt']))
+                returnMsg['response'] = {
+                    order_id: order_id,
+                }
+            except Exception, e:
+                returnMsg["error"] = {
+                    error_code: 11,
+                    error_msg: 'incorrect request',
+                    critical: True,
+                }
+            break
+
+        elif notification_type == 'order_status_change_test':
+            try:
+                order_id = request.POST['order_id']
+                user_id = request.POST['user_id']
+
+                orderRow = orderTab.objects.create(order_id=order_id,user_id=user_id)
+                orderRow.save()
+                user = User.objects.filter(username=username)
+                spent_kleeek(user, kleeekSell['type'], -int(kleeekSell['cnt']))
+                returnMsg['response'] = {
+                    order_id: order_id,
+                }
+            except Exception, e:
+                returnMsg["error"] = {
+                    error_code: 100,
+                    error_msg: 'write database error',
+                    critical: True,
+                }
+            break
+        else
+            returnMsg["error"] = {
+                error_code: 101,
+                error_msg: 'unknow notification type',
+                critical: True,
+            }
+        return HttpResponse(structReturnFormat(returnMsg))
 
 # done
 def is_authenticated(request):
