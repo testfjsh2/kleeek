@@ -260,7 +260,7 @@ def check_sign(request):
 def get_price(typeKleeek, countKleeek):
     price = 0
     if typeKleeek == 2:
-        price = 1
+        price = countKleeek
     if typeKleeek == 1:
         if countKleeek<=5:
             price = countKleeek * 10
