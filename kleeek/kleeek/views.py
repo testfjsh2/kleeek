@@ -286,7 +286,7 @@ def sell_kleeek(request):
         except Exception, e:
             returnMsg["error"] = {
                 "error_code": 11,
-                "error_msg": 'incorrect request. check the item:' + request.POST['item'],
+                "error_msg": 'incorrect request. check the item:' + itemFormat,
                 "critical": True,
             }
             return HttpResponse(structReturnFormat(returnMsg))
