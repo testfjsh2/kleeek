@@ -285,7 +285,7 @@ def sell_kleeek(request):
                 "error_msg": 'incorrect request. check the item',
                 "critical": True,
             }
-            return HttpResponse(structReturnFormat(erMsg))
+            return HttpResponse(structReturnFormat(returnMsg))
 
         if notification_type == 'get_item':
             if kleeekSell['type'] == '1':
