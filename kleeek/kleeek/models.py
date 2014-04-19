@@ -27,6 +27,7 @@ class payment(models.Model):
     userGold = models.IntegerField()
     userSilver = models.IntegerField()
     userBronze = models.IntegerField()
+    friendsList = models.TextField()
     dayBonus = models.IntegerField()
     wallPostBonus = models.IntegerField()
 
