@@ -4,6 +4,7 @@ from websocket import create_connection
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from models import roomManager, roomLog, payment, User, orderTab
 
 from datetime import datetime
