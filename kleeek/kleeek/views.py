@@ -47,7 +47,7 @@ def set_vote(request):
 def get_room(request):
     structReturn = []
     try:
-        if is_authenticated(request):
+        # if is_authenticated(request):
             # if request.method == "GET":
                 roomManagerID = request.GET['roomManagerID']
                 tmpRoom = roomManager.objects.get(id=roomManagerID)
@@ -69,8 +69,8 @@ def get_room(request):
                     })
                 SockResponse(structReturnFormat(structReturn))
                 return HttpResponse(structReturnFormat(structReturn))
-        else:
-            return HttpResponse(403)
+        # else:
+            # return HttpResponse(403)
     except Exception, e:
         return HttpResponse(0)
 
