@@ -3,6 +3,7 @@ import json
 from websocket import create_connection
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
 from models import roomManager, roomLog, payment, User, orderTab
 
 from datetime import datetime
@@ -270,15 +271,16 @@ def get_price(typeKleeek, countKleeek):
             price == 500
     return price
 
+@method_decorator(csrf_exempt)
 def sell_kleeek(request):
     if check_sign(request):
         returnMsg = {}
         erMsg = {}
 
         try:
-            notification_type = request.POST['notification_type']
-            kleeekSell = json.loads(request.POST['item'])
-            username = request.POST['user_id']
+            notification_type = request.GET['notification_type']
+            kleeekSell = json.loads(request.GET['item'])
+            username = request.GET['user_id']
         except Exception, e:
             returnMsg["error"] = {
                 "error_code": 11,
@@ -322,8 +324,8 @@ def sell_kleeek(request):
 
         elif notification_type == 'order_status_change':
             try:
-                order_id = request.POST['order_id']
-                user_id = request.POST['user_id']
+                order_id = request.GET['order_id']
+                user_id = request.GET['user_id']
 
                 orderRow = orderTab.objects.create(order_id=order_id,user_id=user_id)
                 orderRow.save()
@@ -341,8 +343,8 @@ def sell_kleeek(request):
 
         elif notification_type == 'order_status_change_test':
             try:
-                order_id = request.POST['order_id']
-                user_id = request.POST['user_id']
+                order_id = request.GET['order_id']
+                user_id = request.GET['user_id']
 
                 orderRow = orderTab.objects.create(order_id=order_id,user_id=user_id)
                 orderRow.save()
