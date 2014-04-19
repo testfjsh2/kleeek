@@ -279,9 +279,9 @@ def sell_kleeek(request):
         erMsg = {}
 
         try:
-            notification_type = request.GET['notification_type']
-            kleeekSell = json.loads(request.GET['item'])
-            username = request.GET['user_id']
+            notification_type = request.POST['notification_type']
+            kleeekSell = json.loads(request.POST['item'])
+            username = request.POST['user_id']
         except Exception, e:
             returnMsg["error"] = {
                 "error_code": 11,
@@ -325,8 +325,8 @@ def sell_kleeek(request):
 
         elif notification_type == 'order_status_change':
             try:
-                order_id = request.GET['order_id']
-                user_id = request.GET['user_id']
+                order_id = request.POST['order_id']
+                user_id = request.POST['user_id']
 
                 orderRow = orderTab.objects.create(order_id=order_id,user_id=user_id)
                 orderRow.save()
@@ -344,8 +344,8 @@ def sell_kleeek(request):
 
         elif notification_type == 'order_status_change_test':
             try:
-                order_id = request.GET['order_id']
-                user_id = request.GET['user_id']
+                order_id = request.POST['order_id']
+                user_id = request.POST['user_id']
 
                 orderRow = orderTab.objects.create(order_id=order_id,user_id=user_id)
                 orderRow.save()
