@@ -281,47 +281,44 @@ def sell_kleeek(request):
             username = request.POST['user_id']
         except Exception, e:
             returnMsg["error"] = {
-                error_code: 11,
-                error_msg: 'incorrect request',
-                critical: True,
+                "error_code": 11,
+                "error_msg": 'incorrect request. check the item',
+                "critical": True,
             }
             return HttpResponse(structReturnFormat(erMsg))
 
         if notification_type == 'get_item':
-            if kleeekSell['type'] == 1:
+            if kleeekSell['type'] == '1':
                 returnMsg['response'] = {
-                    item_id: '1_' + kleeekSell['cnt'],
-                    title: kleeekSell['cnt'] + ' Gold Kleeek',
-                    photo_url: '',
-                    price: get_price(1, int(kleeekSell['cnt'])),
+                    "item_id": '1_' + kleeekSell['cnt'],
+                    "title": kleeekSell['cnt'] + ' Gold Kleeek',
+                    "photo_url": '',
+                    "price": get_price(1, int(kleeekSell['cnt'])),
                 }
 
-            if kleeekSell['type'] == 2:
+            if kleeekSell['type'] == '2':
                 returnMsg['response'] = {
-                    item_id: '2_' + kleeekSell['cnt'],
-                    title: kleeekSell['cnt'] + ' Silver Kleeek',
-                    photo_url: '',
-                    price: get_price(2, int(kleeekSell['cnt'])),
+                    "item_id": '2_' + kleeekSell['cnt'],
+                    "title": kleeekSell['cnt'] + ' Silver Kleeek',
+                    "photo_url": '',
+                    "price": get_price(2, int(kleeekSell['cnt'])),
                 }
-            break
 
         elif notification_type == 'get_item_test':
-            if kleeekSell['type'] == 1:
+            if kleeekSell['type'] == '1':
                 returnMsg['response'] = {
-                    item_id: '1_' + kleeekSell['cnt'],
-                    title: kleeekSell['cnt'] + ' Gold Kleeek(test mode)',
-                    photo_url: '',
-                    price: get_price(1, int(kleeekSell['cnt'])),
+                    "item_id": '1_' + kleeekSell['cnt'],
+                    "title": kleeekSell['cnt'] + ' Gold Kleeek(test mode)',
+                    "photo_url": '',
+                    "price": get_price(1, int(kleeekSell['cnt'])),
                 }
-
-            if kleeekSell['type'] == 2:
+            if kleeekSell['type'] == '2':
                 returnMsg['response'] = {
-                    item_id: '2_' + kleeekSell['cnt'],
-                    title: kleeekSell['cnt'] + ' Silver Kleeek(test mode)',
-                    photo_url: '',
-                    price: get_price(2, int(kleeekSell['cnt'])),
+                    "item_id": '2_' + kleeekSell['cnt'],
+                    "title": kleeekSell['cnt'] + ' Silver Kleeek(test mode)',
+                    "photo_url": '',
+                    "price": get_price(2, int(kleeekSell['cnt'])),
                 }
-            break
 
         elif notification_type == 'order_status_change':
             try:
@@ -333,15 +330,14 @@ def sell_kleeek(request):
                 user = User.objects.filter(username=username)
                 spent_kleeek(user, kleeekSell['type'], -int(kleeekSell['cnt']))
                 returnMsg['response'] = {
-                    order_id: order_id,
+                    "order_id": order_id,
                 }
             except Exception, e:
                 returnMsg["error"] = {
-                    error_code: 11,
-                    error_msg: 'incorrect request',
-                    critical: True,
+                    "error_code": 11,
+                    "error_msg": 'incorrect request',
+                    "critical": True,
                 }
-            break
 
         elif notification_type == 'order_status_change_test':
             try:
@@ -353,20 +349,19 @@ def sell_kleeek(request):
                 user = User.objects.filter(username=username)
                 spent_kleeek(user, kleeekSell['type'], -int(kleeekSell['cnt']))
                 returnMsg['response'] = {
-                    order_id: order_id,
+                    "order_id": order_id,
                 }
             except Exception, e:
                 returnMsg["error"] = {
-                    error_code: 100,
-                    error_msg: 'write database error',
-                    critical: True,
+                    "error_code": 100,
+                    "error_msg": 'write database error',
+                    "critical": True,
                 }
-            break
         else:
             returnMsg["error"] = {
-                error_code: 101,
-                error_msg: 'unknow notification type',
-                critical: True,
+                "error_code": 101,
+                "error_msg": 'unknow notification type',
+                "critical": True,
             }
         return HttpResponse(structReturnFormat(returnMsg))
 
