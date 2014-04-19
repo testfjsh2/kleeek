@@ -362,7 +362,7 @@ def sell_kleeek(request):
                     critical: True,
                 }
             break
-        else
+        else:
             returnMsg["error"] = {
                 error_code: 101,
                 error_msg: 'unknow notification type',
