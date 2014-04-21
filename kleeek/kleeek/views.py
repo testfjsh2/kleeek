@@ -269,23 +269,29 @@ def set_wall_post_bonus(request):
         payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
     return HttpResponse(get_user_total(request))
 
-#def
+#NOT DON. NEED FAST!
 def set_friend_bonus(request):
-    userID = request.GET['userID']
-    friendsList = request.GET['friendsList']
-    if is_authenticated(request):
-        if  friendsList:
-            friendsList = friendsList[1:-1].split(',')
-            user = User.objects.filter(username=userID)
-            oldFrindsList = payment.objects.get(userID=user).friendsList
-            for friendID in friendsList:
-                if friendID not in oldFrindsList:
-                    oldBronze = payment.objects.get(userID=user).userBronze
-                    oldFrindsList = payment.objects.get(userID=user).friendsList
-                    payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
-                    payment.objects.filter(userID=user).update(friendsList=oldFrindsList[:-1] + friendID + ',]')
-            return HttpResponse(get_user_total(request))
-    return HttpResponse(0)
+    try:
+        userID = request.GET['userID']
+        friendsList = request.GET['friendsList']
+        if is_authenticated(request):
+            if  friendsList:
+                friendsList = friendsList[1:-1].split(',')
+                user = User.objects.filter(username=userID)
+                oldFrindsList = payment.objects.get(userID=user).friendsList
+                import pdb; pdb.set_trace()
+                for friendID in friendsList:
+                    if friendID not in oldFrindsList:
+                        friend = User.objects.filter(username=friendID)[0]
+                        #check the register's dates
+                        if friend.date_joined._ge_(user[0].date_joined):
+                            oldBronze = payment.objects.get(userID=user).userBronze
+                            oldFrindsList = payment.objects.get(userID=user).friendsList
+                            payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
+                            payment.objects.filter(userID=user).update(friendsList=oldFrindsList[:-1] + friendID + ',]')
+                return HttpResponse(get_user_total(request))
+    except Exception, e:
+        return HttpResponse(0)
 
 def check_sign(request):
     return True
