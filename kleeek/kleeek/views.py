@@ -281,13 +281,15 @@ def set_friend_bonus(request):
                 oldFrindsList = payment.objects.get(userID=user).friendsList
                 for friendID in friendsList:
                     if friendID not in oldFrindsList:
-                        friend = User.objects.filter(username=friendID)[0]
-                        #check the register's dates
-                        if friend.date_joined._ge_(user[0].date_joined):
-                            oldBronze = payment.objects.get(userID=user).userBronze
-                            oldFrindsList = payment.objects.get(userID=user).friendsList
-                            payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
-                            payment.objects.filter(userID=user).update(friendsList=oldFrindsList[:-1] + friendID + ',]')
+                        friend = User.objects.filter(username=friendID)
+                        if friend:
+                            friend = friend[0]
+                            #check the register's dates
+                            if friend.date_joined._ge_(user[0].date_joined):
+                                oldBronze = payment.objects.get(userID=user).userBronze
+                                oldFrindsList = payment.objects.get(userID=user).friendsList
+                                payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
+                                payment.objects.filter(userID=user).update(friendsList=oldFrindsList[:-1] + friendID + ',]')
                 return HttpResponse(get_user_total(request))
     except Exception, e:
         return HttpResponse(0)
