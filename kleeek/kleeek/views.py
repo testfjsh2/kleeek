@@ -279,7 +279,6 @@ def set_friend_bonus(request):
                 friendsList = friendsList[1:-1].split(',')
                 user = User.objects.filter(username=userID)
                 oldFrindsList = payment.objects.get(userID=user).friendsList
-                import pdb; pdb.set_trace()
                 for friendID in friendsList:
                     if friendID not in oldFrindsList:
                         friend = User.objects.filter(username=friendID)[0]
