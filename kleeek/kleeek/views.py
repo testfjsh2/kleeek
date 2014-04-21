@@ -285,7 +285,7 @@ def set_friend_bonus(request):
                         if friend:
                             friend = friend[0]
                             #check the register's dates
-                            if friend.date_joined._ge_(user[0].date_joined):
+                            if friend.date_joined.__ge__(user[0].date_joined):
                                 oldBronze = payment.objects.get(userID=user).userBronze
                                 oldFrindsList = payment.objects.get(userID=user).friendsList
                                 payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
