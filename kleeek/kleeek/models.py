@@ -30,6 +30,7 @@ class payment(models.Model):
     friendsList = models.TextField()
     dayBonus = models.IntegerField()
     wallPostBonus = models.IntegerField()
+    friendsCount = models.IntegerField()
 
 class orderTab(models.Model):
     order_id = models.IntegerField()

@@ -140,6 +140,7 @@ def get_user_total(request):
                 "userSilver": str(oldPayment.userSilver),
                 "userBronze": str(oldPayment.userBronze),
                 "dayBonus": str(oldPayment.dayBonus),
+                "friendsCount": str(oldPayment.friendsCount),
             })
             return HttpResponse(structReturnFormat(structReturn))
     except Exception, e:
@@ -439,7 +440,7 @@ def is_authenticated(request):
                                             password='PBKDF2PasswordHasher', 
                                             first_name=first_name,
                                             last_name=last_name)
-                paymentObj = payment.objects.create(userID=user,userGold=1000,userSilver=1000,userBronze=3000,dayBonus=1, wallPostBonus=1,friendsList='[]')
+                paymentObj = payment.objects.create(userID=user,userGold=1000,userSilver=1000,userBronze=3000,dayBonus=1, wallPostBonus=1, friendsCount=0,friendsList='[]')
                 user.save()
                 paymentObj.save()
                 return True
