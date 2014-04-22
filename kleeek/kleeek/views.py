@@ -277,7 +277,7 @@ def uncheck_friend_list_count(request):
             userID = request.GET['userID']
             user = User.objects.filter(username=userID)
             payment.objects.filter(userID=user).update(oldFriendsCount=0)
-            return HttpResponse(1)
+        return HttpResponse(1)
     except Exception, e:
         return HttpResponse(0)
 

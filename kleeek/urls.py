@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^set_day_bonus/', 'kleeek.kleeek.views.set_day_bonus'),
     url(r'^set_wall_post_bonus/', 'kleeek.kleeek.views.set_wall_post_bonus'),
     url(r'^set_friend_bonus/', 'kleeek.kleeek.views.set_friend_bonus'),
+    url(r'^uncheck_friend_list_count/', 'kleeek.kleeek.views.uncheck_friend_list_count'),
     # url(r'^close_rooms/', 'kleeek.kleeek.views.close_rooms'),
     # url(r'^kill_rooms/', 'kleeek.kleeek.views.kill_rooms'),
 )
