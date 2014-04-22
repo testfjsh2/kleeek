@@ -139,6 +139,7 @@ def get_user_total(request):
                 "userGold": str(oldPayment.userGold),
                 "userSilver": str(oldPayment.userSilver),
                 "userBronze": str(oldPayment.userBronze),
+                "dayBonus": str(oldPayment.dayBonus),
             })
             return HttpResponse(structReturnFormat(structReturn))
     except Exception, e:
@@ -264,10 +265,22 @@ def set_wall_post_bonus(request):
     oldPayment = payment.objects.get(userID=user)
     oldBronze = oldPayment.userBronze
     wallPostBonus = oldPayment.wallPostBonus
-    if wallPostBonus != 1:
-        payment.objects.filter(userID=user).update(wallPostBonus=1)
+    if wallPostBonus == 1:
+        payment.objects.filter(userID=user).update(wallPostBonus=0)
         payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
     return HttpResponse(get_user_total(request))
+
+def uncheck_friend_list_count(request):
+    try:
+        if is_authenticated(request):
+            userID = request.GET['userID']
+            user = User.objects.filter(username=userID)
+            payment.objects.filter(userID=user).update(oldFriendsCount=0)
+            return HttpResponse(1)
+    except Exception, e:
+        return HttpResponse(0)
+
+    
 
 #NOT DON. NEED FAST!
 def set_friend_bonus(request):
@@ -288,8 +301,10 @@ def set_friend_bonus(request):
                             if friend.date_joined.__ge__(user[0].date_joined):
                                 oldBronze = payment.objects.get(userID=user).userBronze
                                 oldFrindsList = payment.objects.get(userID=user).friendsList
+                                oldFriendsCount = payment.objects.get(userID=user).friendsCount
                                 payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
                                 payment.objects.filter(userID=user).update(friendsList=oldFrindsList[:-1] + friendID + ',]')
+                                payment.objects.filter(userID=user).update(friendsCount=oldFriendsCount+1)
                 return HttpResponse(get_user_total(request))
     except Exception, e:
         return HttpResponse(0)
@@ -424,7 +439,7 @@ def is_authenticated(request):
                                             password='PBKDF2PasswordHasher', 
                                             first_name=first_name,
                                             last_name=last_name)
-                paymentObj = payment.objects.create(userID=user,userGold=1000,userSilver=1000,userBronze=3000,dayBonus=0, wallPostBonus=0,friendsList='[]')
+                paymentObj = payment.objects.create(userID=user,userGold=1000,userSilver=1000,userBronze=3000,dayBonus=1, wallPostBonus=1,friendsList='[]')
                 user.save()
                 paymentObj.save()
                 return True
