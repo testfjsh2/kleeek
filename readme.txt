@@ -1,6 +1,14 @@
 run crons: 
 python manage.py cron
 for run crons methods. 
+-----------------------------------
+mysql install\and settings:
+
+mysql -u root -h localhost -p
+CREATE USER kleeek@localhost IDENTIFIED BY "5UK7t;K0\k";
+CREATE DATABASE kleeek;
+GRANT ALL ON kleeek.* TO kleeek@localhost;
+-----------------------------------
 
 
 migration
