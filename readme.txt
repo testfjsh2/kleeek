@@ -4,10 +4,19 @@ for run crons methods.
 -----------------------------------
 mysql install\and settings:
 
+to /etc/mysql/my.cnf add next rows:
+to [client]
+default-character-set=utf8
+to [mysqld] 
+character-set-server=utf8
+default-storage-engine=MyISAM
+transaction-isolation = READ-COMMITTED
+
 mysql -u root -h localhost -p
 CREATE USER kleeek@localhost IDENTIFIED BY "5UK7tK0k";
 CREATE DATABASE kleeek;
 GRANT ALL ON kleeek.* TO kleeek@localhost;
+GRANT ALL ON kleeek.* TO kleeek@'%';
 -----------------------------------
 change password for db-user:
 mysql -u root -h localhost -p
