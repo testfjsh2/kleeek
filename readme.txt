@@ -5,9 +5,13 @@ for run crons methods.
 mysql install\and settings:
 
 mysql -u root -h localhost -p
-CREATE USER kleeek@localhost IDENTIFIED BY "5UK7t;K0\k";
+CREATE USER kleeek@localhost IDENTIFIED BY "5UK7tK0k";
 CREATE DATABASE kleeek;
 GRANT ALL ON kleeek.* TO kleeek@localhost;
+-----------------------------------
+change password for db-user:
+mysql -u root -h localhost -p
+SET PASSWORD FOR kleeek@localhost = PASSWORD('5UK7tK0k');
 -----------------------------------
 
 
