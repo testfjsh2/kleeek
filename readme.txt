@@ -1,5 +1,6 @@
 run crons: 
 python manage.py cron
+python manage.py set_day_bonus
 for run crons methods. 
 -----------------------------------
 mysql install\and settings:

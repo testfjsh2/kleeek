@@ -7,7 +7,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from models import roomManager, roomLog, payment, User, orderTab
 
-from datetime import datetime
+import datetime
+
+UTC = 7200
 
 def SockResponse(msg):
     ws = create_connection("ws://127.0.0.1:8888/chatsocket")
@@ -24,7 +26,7 @@ def set_vote(request):
                 first_name = request.GET['first_name']
                 last_name = request.GET['last_name']
                 typeKleeek = request.GET['typeKleeek']
-                dateKleek = datetime.now()
+                dateKleek = datetime.datetime.now()
                 user = User.objects.filter(username=userID)
                 currentManager = roomManager.objects.filter(id = roomManagerID)
 
@@ -79,7 +81,7 @@ def close_rooms(request):
     try:
         managers = roomManager.objects.filter(status='active')
         for manager in managers:
-            if (manager.dateLost <= datetime.today().date()):
+            if (manager.dateLost <= (datetime.datetime.today().date() + datetime.timedelta(seconds=UTC))):
                 manager.status='close'
                 manager.save()
         return get_room_list(request)
@@ -91,7 +93,7 @@ def kill_rooms(request):
     try:
         managers = roomManager.objects.filter(status='close')
         for manager in managers:
-            if (manager.dateLost.day < datetime.today().date().day) or (manager.dateLost.day == 1 and datetime.today().date().day != 1):
+            if (manager.dateLost.day < datetime.datetime.today().date().day) or (manager.dateLost.day == 1 and datetime.datetime.today().date().day != 1):
                 manager.status='kill'
                 manager.save()
         return get_room_list(request)
