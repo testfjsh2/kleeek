@@ -143,6 +143,7 @@ def get_user_total(request):
                 "friendsCount": str(oldPayment.friendsCount),
             })
             return HttpResponse(structReturnFormat(structReturn))
+        return HttpResponse(403)
     except Exception, e:
         return HttpResponse(0)
 

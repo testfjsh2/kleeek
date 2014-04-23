@@ -12,9 +12,11 @@ character-set-server=utf8
 default-storage-engine=MyISAM
 transaction-isolation = READ-COMMITTED
 
+run command:
 mysql -u root -h localhost -p
+insert to db:
 CREATE USER kleeek@localhost IDENTIFIED BY "5UK7tK0k";
-CREATE DATABASE kleeek;
+create database kleeek charset=utf8;
 GRANT ALL ON kleeek.* TO kleeek@localhost;
 GRANT ALL ON kleeek.* TO kleeek@'%';
 -----------------------------------
@@ -22,6 +24,11 @@ change password for db-user:
 mysql -u root -h localhost -p
 SET PASSWORD FOR kleeek@localhost = PASSWORD('5UK7tK0k');
 -----------------------------------
+servers restart:
+/etc/init.d/apache2 restart
+-----------------------------------
+debug:
+ python manage.py runserver 0.0.0.0:8000
 
 
 migration
