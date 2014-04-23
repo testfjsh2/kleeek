@@ -255,29 +255,37 @@ def set_bonus(request):
                 payment.objects.filter(userID=user).update(dayBonus=0)
                 payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
                 return HttpResponse(get_user_total(request))
-        return HttpResponse(0)
+            return HttpResponse(200)
+        return HttpResponse(403)
     except Exception, e:
         return HttpResponse(0)
 
 #done
 def set_wall_post_bonus(request):
-    userID = request.GET['userID']
-    user = User.objects.filter(username=userID)
-    oldPayment = payment.objects.get(userID=user)
-    oldBronze = oldPayment.userBronze
-    wallPostBonus = oldPayment.wallPostBonus
-    if wallPostBonus == 1:
-        payment.objects.filter(userID=user).update(wallPostBonus=0)
-        payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
-    return HttpResponse(get_user_total(request))
+    try:
+        if is_authenticated(request):
+            userID = request.GET['userID']
+            user = User.objects.filter(username=userID)
+            oldPayment = payment.objects.get(userID=user)
+            oldBronze = oldPayment.userBronze
+            wallPostBonus = oldPayment.wallPostBonus
+            if wallPostBonus == 1:
+                payment.objects.filter(userID=user).update(wallPostBonus=0)
+                payment.objects.filter(userID=user).update(userBronze=(oldBronze+1))
+            return HttpResponse(get_user_total(request))
+        return HttpResponse(403)
+    except Exception, e:
+        return HttpResponse(0)
+
 
 def uncheck_friend_list_count(request):
     try:
         if is_authenticated(request):
             userID = request.GET['userID']
             user = User.objects.filter(username=userID)
-            payment.objects.filter(userID=user).update(oldFriendsCount=0)
-        return HttpResponse(1)
+            payment.objects.filter(userID=user).update(friendsCount=0)
+            return HttpResponse(200)
+        return HttpResponse(403)
     except Exception, e:
         return HttpResponse(0)
 
