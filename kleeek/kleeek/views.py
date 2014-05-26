@@ -19,7 +19,7 @@ def SockResponse(msg):
 # done
 def set_vote(request):
     try:
-        if is_authenticated(request):
+        # if is_authenticated(request):
             if request.method == "GET":
                 userID = request.GET['userID']
                 roomManagerID = request.GET['roomManagerID']
@@ -28,22 +28,33 @@ def set_vote(request):
                 typeKleeek = request.GET['typeKleeek']
                 dateKleek = datetime.datetime.now()
                 user = User.objects.filter(username=userID)
-                currentManager = roomManager.objects.filter(id = roomManagerID)
+                # currentManager = roomManager.objects.filter(id = roomManagerID)#why??
 
                 if spent_kleeek(user, typeKleeek):
-                        tmpRoom = roomManager.objects.filter(id = roomManagerID).update( 
+                        tmpRoom = roomManager.objects.filter(id = roomManagerID).update(
                                               ownderID = userID, 
                                               ownerName = first_name,
                                               ownerLastName = last_name,
                                               lastClickDate = dateKleek
                                             )
                         # tmpRoomLog = roomLog.objects.filter(roomManager = roomManagerID).update(oldOwners = (tmpRoomLog + userName))
-                        log_statistic(currentManager, user, dateKleek)
+                        # log_statistic(currentManager, user, dateKleek)
+                        log_statistic(tmpRoom, user, dateKleek)
                 return HttpResponse(get_room(request))
-        else:
-            return HttpResponse(403)
+        # else:
+        #     return HttpResponse(403)
     except Exception, e:
         return HttpResponse(0)
+
+
+def set_rules_flag(request):
+    try:
+        userID = request.GET['userID']
+        user = User.objects.filter(username=userID)
+        payment.objects.filter(userID=user).update(rulesFlag=True)
+        return HttpResponse(True)
+    except Exception, e:
+        return HttpResponse(False)
 
 # done
 def get_room(request):
@@ -143,6 +154,7 @@ def get_user_total(request):
                 "userBronze": str(oldPayment.userBronze),
                 "dayBonus": str(oldPayment.dayBonus),
                 "friendsCount": str(oldPayment.friendsCount),
+                "rulesFlag": str(oldPayment.rulesFlag),
             })
             return HttpResponse(structReturnFormat(structReturn))
         return HttpResponse(403)
@@ -217,13 +229,13 @@ def spent_kleeek(user, typeKleeek, countKleeek=1):
             if newGold >= 0:
                 payment.objects.filter(userID=user).update(userGold=newGold)
                 return True
-        if int(typeKleeek) == 2:
+        elif int(typeKleeek) == 2:
             oldSilver = payment.objects.get(userID=user).userSilver
             newSilver = oldSilver - countKleeek
             if newSilver >= 0:
                 payment.objects.filter(userID=user).update(userSilver=newSilver)
                 return True
-        if int(typeKleeek) == 3:
+        elif int(typeKleeek) == 3:
             oldBronze = payment.objects.get(userID=user).userBronze
             newBronze = oldBronze - countKleeek
             if newBronze >= 0:
@@ -451,7 +463,7 @@ def is_authenticated(request):
                                             password='PBKDF2PasswordHasher', 
                                             first_name=first_name,
                                             last_name=last_name)
-                paymentObj = payment.objects.create(userID=user,userGold=1000,userSilver=1000,userBronze=3000,dayBonus=1, wallPostBonus=1, friendsCount=0,friendsList='[]')
+                paymentObj = payment.objects.create(userID=user,userGold=1000,userSilver=1000,userBronze=3000,dayBonus=1, wallPostBonus=1, friendsCount=0, rulesFlag=False ,friendsList='[]')
                 user.save()
                 paymentObj.save()
                 return True
@@ -463,6 +475,7 @@ def is_authenticated(request):
 #done
 def log_statistic(currentManagers, users, dateKleek):
     try:
+        import pdb; pdb.set_trace()
         for currentManager in currentManagers:
             for user in users:
                 if not hasattr(currentManager, 'roomlog'):
@@ -485,3 +498,5 @@ def get_statistic(statSring):
         return jsonStatistic
     except Exception, e:
         return []
+
+
