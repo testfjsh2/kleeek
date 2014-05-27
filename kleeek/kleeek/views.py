@@ -488,7 +488,7 @@ def is_authenticated(request):
                                             password='PBKDF2PasswordHasher', 
                                             first_name=first_name,
                                             last_name=last_name)
-                paymentObj = payment.objects.create(userID=user,userGold=1000,userSilver=1000,userBronze=3000,dayBonus=1, wallPostBonus=1, friendsCount=0, rulesFlag=False ,friendsList='[]')
+                paymentObj = payment.objects.create(userID=user,userGold=0,userSilver=1,userBronze=3,dayBonus=1, wallPostBonus=1, friendsCount=0, rulesFlag=False ,friendsList='[]')
                 user.save()
                 paymentObj.save()
                 return True
