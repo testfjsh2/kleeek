@@ -5,11 +5,11 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from models import roomManager, roomLog, payment, User, orderTab
+from models import roomType, roomManager, roomLog, payment, User, orderTab
 
 import datetime
 
-UTC = 7200
+UTC = 4
 
 def SockResponse(msg):
     ws = create_connection("ws://127.0.0.1:8888/chatsocket")
@@ -46,7 +46,7 @@ def set_vote(request):
     except Exception, e:
         return HttpResponse(0)
 
-
+#done
 def set_rules_flag(request):
     try:
         userID = request.GET['userID']
@@ -55,6 +55,55 @@ def set_rules_flag(request):
         return HttpResponse(True)
     except Exception, e:
         return HttpResponse(False)
+
+#done
+def create_silver_room(roomPosition):
+    try:
+        roomTypeObj = roomType.objects.filter(name='Silver')
+        if len(roomTypeObj) > 0:
+            roomManagerObj = roomManager.objects.create( roomTypeID=roomTypeObj[0], 
+                                        roomPosition=roomPosition, 
+                                        dateCreate=datetime.datetime.now() + datetime.timedelta(hours=UTC),
+                                        dateLost=datetime.datetime.now() + datetime.timedelta(days=1, hours=UTC),
+                                        ownderID=0,
+                                        ownerName='none',
+                                        ownerLastName='none',
+                                        lastClickDate=datetime.datetime.now() + datetime.timedelta(hours=UTC),
+                                        status='active' )
+            roomManagerObj.save()
+            return 1
+    except Exception, e:
+        return 0
+
+#done
+def close_rooms(request):
+    try:
+        managers = roomManager.objects.filter(status='active')
+        for manager in managers:
+            if (manager.dateLost <= (datetime.datetime.now() + datetime.timedelta(hours=UTC)).date()):
+                if manager.roomTypeID.name == 'Silver':
+                    manager.status = 'kill'
+                    create_silver_room(manager.roomPosition)
+                    spent_kleeek(manager.ownderID, 2, -1)
+                    manager.save()
+                else:
+                    manager.status='close'
+                    manager.save()
+        return get_room_list(request)
+    except Exception, e:
+        return HttpResponse(0)
+
+# done
+def kill_rooms(request):
+    try:
+        managers = roomManager.objects.filter(status='close')
+        for manager in managers:
+            if (manager.dateLost + datetime.timedelta(days=1)) <= (datetime.datetime.now() + datetime.timedelta(hours=4)).date():
+                manager.status='kill'
+                manager.save()
+        return get_room_list(request)
+    except Exception, e:
+        return HttpResponse(0)
 
 # done
 def get_room(request):
@@ -84,30 +133,6 @@ def get_room(request):
                 return HttpResponse(structReturnFormat(structReturn))
         # else:
             # return HttpResponse(403)
-    except Exception, e:
-        return HttpResponse(0)
-
-#done
-def close_rooms(request):
-    try:
-        managers = roomManager.objects.filter(status='active')
-        for manager in managers:
-            if (manager.dateLost <= (datetime.datetime.today().date() + datetime.timedelta(seconds=UTC))):
-                manager.status='close'
-                manager.save()
-        return get_room_list(request)
-    except Exception, e:
-        return HttpResponse(0)
-
-# done
-def kill_rooms(request):
-    try:
-        managers = roomManager.objects.filter(status='close')
-        for manager in managers:
-            if (manager.dateLost.day < datetime.datetime.today().date().day) or (manager.dateLost.day == 1 and datetime.datetime.today().date().day != 1):
-                manager.status='kill'
-                manager.save()
-        return get_room_list(request)
     except Exception, e:
         return HttpResponse(0)
 
@@ -475,7 +500,6 @@ def is_authenticated(request):
 #done
 def log_statistic(currentManagers, users, dateKleek):
     try:
-        import pdb; pdb.set_trace()
         for currentManager in currentManagers:
             for user in users:
                 if not hasattr(currentManager, 'roomlog'):
