@@ -28,7 +28,7 @@ def set_vote(request):
                 typeKleeek = request.GET['typeKleeek']
                 dateKleek = datetime.datetime.now()
                 user = User.objects.filter(username=userID)
-                # currentManager = roomManager.objects.filter(id = roomManagerID)#why??
+                currentManager = roomManager.objects.filter(id = roomManagerID)#why??
 
                 if spent_kleeek(user, typeKleeek):
                         tmpRoom = roomManager.objects.filter(id = roomManagerID).update(
@@ -38,8 +38,8 @@ def set_vote(request):
                                               lastClickDate = dateKleek
                                             )
                         # tmpRoomLog = roomLog.objects.filter(roomManager = roomManagerID).update(oldOwners = (tmpRoomLog + userName))
-                        # log_statistic(currentManager, user, dateKleek)
-                        log_statistic(tmpRoom, user, dateKleek)
+                        log_statistic(currentManager, user, dateKleek)
+                        # log_statistic(tmpRoom, user, dateKleek)
                 return HttpResponse(get_room(request))
         # else:
         #     return HttpResponse(403)
